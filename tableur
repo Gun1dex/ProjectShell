@@ -96,10 +96,10 @@ echo "Note : Le fichier '-out' doit exister pour être utiliser."
 echo "\n"
 #OLDIFS=$IFS
 #IFS=$scin
-#while IFS=$slin read line
-#do
-#  echo "Ligne n°1 : $line"
-#done < $source
+while read line1
+do
+  echo "Ligne : $line1"
+done < $source
 #IFS=$OLDIFS
 
 # Lecture fichier ligne par ligne.
