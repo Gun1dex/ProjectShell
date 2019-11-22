@@ -96,7 +96,7 @@ echo "Note : Le fichier '-out' doit exister pour être utiliser."
 echo "\n"
 #OLDIFS=$IFS
 #IFS=$scin
-while read line1
+while IFS=$slout read line1
 do
   echo "Ligne : $line1"
 done < $source
