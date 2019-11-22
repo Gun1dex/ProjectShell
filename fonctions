@@ -1,0 +1,79 @@
+#!/bin/sh
+
+valeurCellule() {
+}
+
+addition() {
+  test $# -ne 2 && echo "La fonction d'addition demande 2 params" && return 1
+  # EXEMPLE : addition_resultat=`expr $1 + $2`
+  # Sauf que $1 et $2 sont des cellules et il faut faire la somme de l'intervalle
+}
+
+soustraction() {
+  test $# -ne 2 && echo "La fonction de soustraction demande 2 params" && return 1
+}
+
+multiplication() {
+  test $# -ne 2 && echo "La fonction de multiplication demande 2 params" && return 1
+}
+
+division() {
+  test $# -ne 2 && echo "La fonction de division demande 2 params" && return 1
+}
+
+puissance() {
+  test $# -ne 2 && echo "La fonction de puissance demande 2 params" && return 1
+}
+
+ln() {
+  test $# -ne 1 && echo "La fonction ln() demande 1 (pas plus)." && return 1
+}
+
+exponentielle() {
+}
+
+sqrt() {
+}
+
+somme() {
+
+}
+
+moyenne() {
+}
+
+variance() {
+}
+
+ecarttype() {
+}
+
+mediane() {
+}
+
+min() {
+}
+
+max() {
+}
+
+concat() {
+}
+
+length() {
+}
+
+subsitute() {
+}
+
+size() {
+}
+
+lines() {
+}
+
+shell() {
+}
+
+display() {
+}
