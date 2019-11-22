@@ -41,11 +41,21 @@ do
   "-out")
     dest=$2 
     echo "Résultat dans <$2>";;
-  "-scin") echo "Séparateur de col en source used <$2>";;
-  "-slin") echo "Séparateur de ligne en source used <$2>";;
-  "-scout") echo "Séparateur de col en dest used <$2>";;
-  "-slout") echo "Séparateur de ligne en dest used <$2>";;
-  "-inverse") echo "Inversion des lignes et colonnes";;
+  "-scin") 
+    scin=$2
+    echo "Séparateur de col en source used <$2>";;
+  "-slin")
+    slin=$2 
+    echo "Séparateur de ligne en source used <$2>";;
+  "-scout")
+    scout=$2 
+    echo "Séparateur de col en dest used <$2>";;
+  "-slout") 
+    slout=$2
+    echo "Séparateur de ligne en dest used <$2>";;
+  "-inverse")
+    inverse=1
+    echo "Inversion des lignes et colonnes";;
   *) echo "Arg <$1 $2> non reconnue. Arrêt du script." && exit 1;;
   esac
   shift
@@ -53,6 +63,14 @@ do
 done
 echo "\n"
 
+# les non-spécifié #
+test -z $scin && scin="\t" && echo "Default -scin => <$scin>"
+test -z $slin && slin="\n" && echo "Default -slin => <$slin>"
+test -z $scout && scout=$scin && echo "Default -scout => <$scout>"
+test -z $slout && slout=$slin && echo "Default -slout => <$slout>"
+test -z $inverse && inverse=0 && echo "Default -inverse => <$inverse>"
+# ---------------- #
+echo "\n"
 # test du fichier en arg '-in' #
 if test -n $source -a -e $source
 then 
@@ -74,7 +92,6 @@ fi
 
 echo "Note : Le fichier '-out' doit exister pour être utiliser."
 # ---------------------------- #
-
 
 # Lecture fichier ligne par ligne.
 #while read line; do
