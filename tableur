@@ -1,5 +1,5 @@
 #!/bin/sh
-# Auteurs 
+# Auteurs : 
 #   BENOIT Baptiste
 #   MONCHAUX Clément
 #   SEDDAR Naïm
@@ -10,7 +10,7 @@
 test $# -eq 0 && echo "Be careful kiddo" && exit 1
 
 #echo "Instauration du shebang !"
-errorMsg="Use : tableur [-in feuille] [-out resultat] [-scin sep] [-scout sep] [-slin sep] [-slout sep] [-inverse] "
+errorMsg="Use : tableur [-in feuille] [-out resultat] [-scin sep] [-scout sep] [-slin sep] [-slout sep] [-inverse]"
 
 addition() {
   test $# -ne 2 && echo "La fonction d'addition demande 2 params" && return 1
@@ -92,6 +92,15 @@ fi
 
 echo "Note : Le fichier '-out' doit exister pour être utiliser."
 # ---------------------------- #
+
+echo "\n"
+#OLDIFS=$IFS
+#IFS=$scin
+#while IFS=$slin read line
+#do
+#  echo "Ligne n°1 : $line"
+#done < $source
+#IFS=$OLDIFS
 
 # Lecture fichier ligne par ligne.
 #while read line; do
