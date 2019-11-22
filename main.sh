@@ -10,7 +10,7 @@
 test $# -eq 0 && echo "Be careful kiddo" && exit 1
 
 #echo "Instauration du shebang !"
-#echo " < tableur [-in feuille] [-out resultat] [-scin sep] [-scout sep] [-slin sep] [-slout sep] [-inverse] > "
+errorMsg="Use : tableur [-in feuille] [-out resultat] [-scin sep] [-scout sep] [-slin sep] [-slout sep] [-inverse] "
 
 addition() {
   test $# -ne 2 && echo "La fonction d'addition demande 2 params" && return 1
@@ -32,20 +32,49 @@ ln() {
 #addition 1 2
 #echo $add
 
-while test $# -ge 2
+while test $# -ge 1
 do
   case $1 in
-  "-in") echo "Dans la feuille <$2>";;
-  "-out") echo "Résultat dans <$2>";;
+  "-in") 
+    source=$2
+    echo "Dans la feuille <$2>";;
+  "-out")
+    dest=$2 
+    echo "Résultat dans <$2>";;
   "-scin") echo "Séparateur de col en source used <$2>";;
   "-slin") echo "Séparateur de ligne en source used <$2>";;
   "-scout") echo "Séparateur de col en dest used <$2>";;
   "-slout") echo "Séparateur de ligne en dest used <$2>";;
   "-inverse") echo "Inversion des lignes et colonnes";;
+  *) echo "Arg <$1 $2> non reconnue. Arrêt du script." && exit 1;;
   esac
   shift
   shift
 done
+echo "\n"
+
+# test du fichier en arg '-in' #
+if test -n $source -a -e $source
+then 
+  echo "On lira <$source> plus tard"
+else
+  echo "On lira la sortie standard"
+fi
+
+echo "Note : Le fichier '-in' doit exister pour être utiliser."
+# ---------------------------- #
+echo "\n"
+# test du fichier en arg '-out' #
+if test -n $dest -a -e $dest
+then 
+  echo "Le résultat sera redirigé vers <$dest>"
+else
+  echo "Le résultat sera affiché sur la sortie standard"
+fi
+
+echo "Note : Le fichier '-out' doit exister pour être utiliser."
+# ---------------------------- #
+
 
 # Lecture fichier ligne par ligne.
 #while read line; do
