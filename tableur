@@ -95,11 +95,17 @@ echo "Note : Le fichier '-out' doit exister pour être utiliser."
 
 echo "\n"
 
+destBuffer=""
+while IFS=$slin read line
+do
+  for i in `echo $line | grep -o -e "[^;]*"`
+  do
+    destBuffer="$destBuffer$i$scout"
+  done
+  destBuffer="$destBuffer$slout"
+done < $source
 
-#while IFS=$slout read line1
-#do
-#  echo "Ligne : $line1"
-#done < $source
+echo $destBuffer >> "$dest"
 
 # getFunName #
 # echo "=somme(l1c1,l1c3)" | sed 's/.*=\(.*\)(.*/\1/'
