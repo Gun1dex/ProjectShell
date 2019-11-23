@@ -114,3 +114,6 @@ echo "\n"
 #line=`echo "l1c3" | grep -o -E '[0-9]+' | head -n1`
 #col=`echo "l1c3" | grep -o -E '[0-9]+' | tail -n1`
 #echo "line <$line> and col <$col>"
+
+# check if fun needed #
+#test -z `echo "=somme(ddnfldsn)" | grep -o -E "="`
