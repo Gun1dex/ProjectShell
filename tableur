@@ -94,15 +94,15 @@ echo "Note : Le fichier '-out' doit exister pour être utiliser."
 # ---------------------------- #
 
 echo "\n"
-#OLDIFS=$IFS
-#IFS=$scin
+
+
 #while IFS=$slout read line1
 #do
 #  echo "Ligne : $line1"
 #done < $source
 
-#echo "IFS : <$IFS>"
-#IFS=$OLDIFS
+# getFunName #
+# echo "=somme(l1c1,l1c3)" | sed 's/.*=\(.*\)(.*/\1/'
 
 # getLine #
 # head -n[lineNumber] [File] | tail -n1

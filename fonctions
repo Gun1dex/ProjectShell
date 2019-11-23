@@ -76,6 +76,8 @@ lines() {
 }
 
 shell() {
+  test $# -ne 1 && echo "La fonction shell() a besoin d'un paramètre." && return 1
+  shell_resultat=`"$1"`
 }
 
 display() {
