@@ -36,7 +36,10 @@ sqrt() {
 }
 
 somme() {
-
+  test $# -ne 2 && echo "La fonction somme() a besoin de 2 param" && return 1
+  somme_res=0
+  somme_col_min="colonne min"
+  somme_col_max="colonne max"
 }
 
 moyenne() {
