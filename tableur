@@ -100,7 +100,12 @@ while IFS=$slout read line1
 do
   echo "Ligne : $line1"
 done < $source
+
+echo "IFS : <$IFS>"
 #IFS=$OLDIFS
+
+# getLine #
+# head -n[lineNumber] [File] | tail -n1
 
 # Lecture fichier ligne par ligne.
 #while read line; do
