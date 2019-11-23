@@ -107,6 +107,9 @@ echo "IFS : <$IFS>"
 # getLine #
 # head -n[lineNumber] [File] | tail -n1
 
+# getCell #
+# head -n[lineNumber] [File] | tail -n1 | cut -d'[delimiter]' -f[cellNumber]
+
 # Lecture fichier ligne par ligne.
 #while read line; do
 #    echo $line
