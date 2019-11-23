@@ -102,6 +102,8 @@ do
   do
     destBuffer="$destBuffer$i$scout"
   done
+  #echo $destBuffer | sed 's/.\{1\}$//'
+  destBuffer=`echo $destBuffer | sed 's/.\{2\}$//'`
   destBuffer="$destBuffer$slout"
 done < $source
 
