@@ -97,7 +97,9 @@ echo "Note : Le fichier '-out' doit exister pour être utiliser."
 
 echo "\n"
 
+nbLine=`wc -l < $source`
 destBuffer=""
+
 while IFS=$slin read line
 do
   for i in `echo $line | grep -o -e "[^$scin]*"`
@@ -107,19 +109,20 @@ do
   done
   
   destBuffer="$destBuffer$slout"
+  
   if test $slout = "\n"
   then
     destBuffer=`echo $destBuffer | sed 's/.\{1\}$//'`
   else
     destBuffer=`echo $destBuffer | sed 's/.\{3\}$//'`
-    destBuffer="$destBuffer$slout"
+    destBuffer="$destBuffer""$slout"
   fi
-  #echo "$destBuffer\n"
+  #echo "$destBuffer"
 
 done < $source
+#echo "$destBuffer" | cat -v
 echo "$destBuffer" > "$dest"
-
-cat "$source"
+#echo "$destBuffer" | tr -d '\r' | cat -v
 
 # Number of cell in one line
 # echo `head -n1 "$source" | tail -n1 | grep -o "[^$scin]*" | wc -l`
