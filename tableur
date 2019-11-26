@@ -14,15 +14,17 @@ errorMsg="Use : tableur [-in feuille] [-out resultat] [-scin sep] [-scout sep] [
 
 addition() {
   test $# -ne 2 && echo "La fonction d'addition demande 2 params" && return 1
-  add=`expr $1 + $2`
+  addition_res=`expr $1 + $2`
 }
 
 soustraction() {
   test $# -ne 2 && echo "La fonction de soustraction demande 2 params" && return 1
+  soustraction_res=`expr $1 - $2`
 }
 
 division() {
   test $# -ne 2 && echo "La fonction de division demande 2 params" && return 1
+  division_res=`expr $1 / $2`
 }
 
 ln() {
@@ -112,10 +114,18 @@ do
     destBuffer=`echo $destBuffer | sed 's/.\{3\}$//'`
     destBuffer="$destBuffer$slout"
   fi
-  echo "$destBuffer\n"
+  #echo "$destBuffer\n"
 
 done < $source
 echo "$destBuffer" > "$dest"
+
+cat "$source"
+
+# Number of cell in one line
+# echo `head -n1 "$source" | tail -n1 | grep -o "[^$scin]*" | wc -l`
+
+# Number of lines 
+# echo `wc -l < $source`
 
 # getFunName #
 # echo "=somme(l1c1,l1c3)" | sed 's/.*=\(.*\)(.*/\1/'
