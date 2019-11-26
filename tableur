@@ -100,8 +100,10 @@ echo "\n"
 nbLine=`wc -l < $source`
 destBuffer=""
 
+#  !!! FILE/ECHO VERSION !!! #
 while IFS=$slin read line
 do
+
   for i in `echo $line | grep -o -e "[^$scin]*"`
   do
     destBuffer="$destBuffer$i"
@@ -117,11 +119,17 @@ do
     destBuffer=`echo $destBuffer | sed 's/.\{3\}$//'`
     destBuffer="$destBuffer""$slout"
   fi
-  #echo "$destBuffer"
 
 done < $source
-#echo "$destBuffer" | cat -v
 echo "$destBuffer" > "$dest"
+# echo "$destBuffer" | tee "$dest"
+echo "$destBuffer" | tr '\r' '\n'
+# Voir le cas \t
+# echo "$destBuffer" | cat -v
+# ^^^^^^^^^^^^^^^^^^^^^^^^^^ #
+
+
+#echo "$destBuffer" | cat -v
 #echo "$destBuffer" | tr -d '\r' | cat -v
 
 # Number of cell in one line
