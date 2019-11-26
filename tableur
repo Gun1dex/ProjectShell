@@ -104,7 +104,6 @@ do
     destBuffer="$destBuffer$scout"
   done
   
-  #echo $destBuffer | sed 's/.\{1\}$//'
   destBuffer="$destBuffer$slout"
   if test $slout = "\n"
   then
@@ -116,10 +115,7 @@ do
   echo "$destBuffer\n"
 
 done < $source
-#destBuffer=`echo $destBuffer | sed 's/.\{1\}$//'`
 echo "$destBuffer" > "$dest"
-
-#echo "slout <$slout>"
 
 # getFunName #
 # echo "=somme(l1c1,l1c3)" | sed 's/.*=\(.*\)(.*/\1/'
