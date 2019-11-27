@@ -31,6 +31,13 @@ ln() {
   test $# -ne 1 && echo "La fonction ln() demande 1 (pas plus)." && return 1
 }
 
+analyzer3000() {
+  test $# -ne 1 && echo "Et j'analyse quoi moi ?" && return 1
+  analyzer3000_funName=`echo $1 | cut -d'=' -f2 | cut -d'(' -f1`
+  echo "funName : $analyzer3000_funName"
+  echo "arg : $1"
+}
+
 #addition 1 2
 #echo $add
 
@@ -104,9 +111,15 @@ destBuffer=""
 while IFS=$slin read line
 do
 
-  for i in `echo $line | grep -o -e "[^$scin]*"`
+  for i in `echo $line | grep -o -e "[^$scin]*" | tr ' ' '_'`
   do
-    destBuffer="$destBuffer$i"
+    if test -z `echo "$i" | grep -o -E "="`
+    then
+      destBuffer="$destBuffer$i"
+    else
+      analyzer3000 $i
+      echo $i
+    fi
     destBuffer="$destBuffer$scout"
   done
   
@@ -117,15 +130,17 @@ do
     destBuffer=`echo $destBuffer | sed 's/.\{1\}$//'`
   else
     destBuffer=`echo $destBuffer | sed 's/.\{3\}$//'`
-    destBuffer="$destBuffer""$slout"
+    destBuffer="$destBuffer$slout"
   fi
-
+  # echo "<$destBuffer>"
+  # destBuffer=""
 done < $source
-echo "$destBuffer" > "$dest"
+# echo "$destBuffer" > "$dest"
 # echo "$destBuffer" | tee "$dest"
-echo "$destBuffer" | tr '\r' '\n'
-# Voir le cas \t
-# echo "$destBuffer" | cat -v
+test $slout = "\n" && destBuffer=`echo "$destBuffer" | tr '\r' '\n'`
+# echo "$destBuffer" | tr '\r' '\n' | cat -v
+# Voir le cas '\t' !!!
+echo "$destBuffer" | cat -v
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^ #
 
 
@@ -153,4 +168,4 @@ echo "$destBuffer" | tr '\r' '\n'
 #echo "line <$line> and col <$col>"
 
 # check if fun needed #
-#test -z `echo "=somme(ddnfldsn)" | grep -o -E "="`
+# test -z `echo "=somme(ddnfldsn)" | grep -o -E "="`

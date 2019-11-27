@@ -1,3 +1,4 @@
-1;2;3;4;5
-un;deux;trois;quatre;cinq
+1;2;3;4;=shell(expr 12 + 89)
+pour;=[l1c4];de;plaisir
+=+(l1c1,size(l3c3));deux;trois;quatre;cinq
 6;7;8;9;0
