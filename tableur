@@ -42,6 +42,10 @@ analyseur() {
     echo "il y pas crochet"
   else
     echo "il y a crochet"
+    analyseur_line=`echo "$analyseur_funName" | grep -o -E '[0-9]+' | head -n1`
+    analyseur_col=`echo "$analyseur_funName" | grep -o -E '[0-9]+' | tail -n1`
+    analyseur_resultat=`head -n"$analyseur_line" "$source" | tail -n1 | cut -d"$scin" -f"$analyseur_col"`
+    echo "resultat à la ligne $analyseur_line colonne $analyseur_col : $analyseur_resultat"
   fi
   echo " "
 }
@@ -126,7 +130,7 @@ do
       destBuffer="$destBuffer$i"
     else
       analyseur $i
-      # echo $i
+      destBuffer="$destBuffer$analyseur_resultat"
     fi
     destBuffer="$destBuffer$scout"
   done
