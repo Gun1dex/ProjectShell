@@ -31,15 +31,29 @@ ln() {
   test $# -ne 1 && echo "La fonction ln() demande 1 (pas plus)." && return 1
 }
 
+shell() {
+  test $# -ne 1 && echo "Need one arg" && return 1
+  shell_Arg=`echo $1 | tr '_' ' '`
+  analyseur_resultat=`$shell_Arg`
+}
+
 analyseur() {
   test $# -ne 1 && echo "Et j'analyse quoi moi ?" && return 1
   analyseur_funName=`echo $1 | cut -d'=' -f2 | cut -d'(' -f1`
-  echo "funName : $analyseur_funName"
+  # echo "funName : $analyseur_funName"
   echo "arg : $1"
-  echo "<"`echo $analyseur_funName | grep -F -e "["`">"
+  # echo "<"`echo $analyseur_funName | grep -F -e "["`">"
   if test -z `echo $analyseur_funName | grep -F -e "["`
   then
     echo "il y pas crochet"
+    case $analyseur_funName in
+    "shell")
+      analyseur_funArg=`echo "$1" | cut -d'(' -f2- | sed 's|\(.*\)).*|\1|'`
+      echo $analyseur_funArg
+      shell $analyseur_funArg
+      echo "res : <$analyseur_resultat>";;
+    *)
+    esac
   else
     echo "il y a crochet"
     analyseur_line=`echo "$analyseur_funName" | grep -o -E '[0-9]+' | head -n1`
@@ -147,7 +161,7 @@ do
   # echo "<$destBuffer>"
   # destBuffer=""
 done < $source
-# echo "$destBuffer" > "$dest"
+echo "$destBuffer" > "$dest"
 # echo "$destBuffer" | tee "$dest"
 test $slout = "\n" && destBuffer=`echo "$destBuffer" | tr '\r' '\n'`
 # echo "$destBuffer" | tr '\r' '\n' | cat -v
