@@ -31,11 +31,19 @@ ln() {
   test $# -ne 1 && echo "La fonction ln() demande 1 (pas plus)." && return 1
 }
 
-analyzer3000() {
+analyseur() {
   test $# -ne 1 && echo "Et j'analyse quoi moi ?" && return 1
-  analyzer3000_funName=`echo $1 | cut -d'=' -f2 | cut -d'(' -f1`
-  echo "funName : $analyzer3000_funName"
+  analyseur_funName=`echo $1 | cut -d'=' -f2 | cut -d'(' -f1`
+  echo "funName : $analyseur_funName"
   echo "arg : $1"
+  echo "<"`echo $analyseur_funName | grep -F -e "["`">"
+  if test -z `echo $analyseur_funName | grep -F -e "["`
+  then
+    echo "il y pas crochet"
+  else
+    echo "il y a crochet"
+  fi
+  echo " "
 }
 
 #addition 1 2
@@ -117,8 +125,8 @@ do
     then
       destBuffer="$destBuffer$i"
     else
-      analyzer3000 $i
-      echo $i
+      analyseur $i
+      # echo $i
     fi
     destBuffer="$destBuffer$scout"
   done
@@ -154,7 +162,7 @@ echo "$destBuffer" | cat -v
 # echo `wc -l < $source`
 
 # getFunName #
-# echo "=somme(l1c1,l1c3)" | sed 's/.*=\(.*\)(.*/\1/'
+# echo $1 | cut -d'=' -f2 | cut -d'(' -f1
 
 # getLine #
 # head -n[lineNumber] [File] | tail -n1
