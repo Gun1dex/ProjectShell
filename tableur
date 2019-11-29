@@ -162,12 +162,9 @@ do
   
   destBuffer="$destBuffer$slout"
   
-  if test $slout = "\n" -o $slout = "\t"
-  then
-    destBuffer=`echo $destBuffer | sed "s|\(.*\)$scout.*|\1|"` 
-  else
-    destBuffer=`echo $destBuffer | sed 's/.\{3\}$//'`
-  fi
+  
+  destBuffer=`echo $destBuffer | sed "s|\(.*\)$scout.*|\1|"` 
+  
   destBuffer="$destBuffer$slout"
   destRes="$destRes$destBuffer"
   destBuffer=""
@@ -175,7 +172,7 @@ do
   # echo "-"
 done < $source
 echo "$destRes" > "$dest"
-test $slout = "\n" -o $slout = "\t" && destRes=`echo "$destRes" | tr '\r' '\n'`
+destRes=`echo "$destRes" | tr '\r' '\n'`
 # echo "$destRes" | tr '\r' '\n' | cat -v
 # Voir le cas '\t' !!!
 echo "$destRes" | cat -v
