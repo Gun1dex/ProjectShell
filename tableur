@@ -40,7 +40,7 @@ calcul() {
   test $1 = "x" && analyseur_resultat=`expr $arg1 \* $arg2` && return 0
   test $1 = "/" -a $arg2 -eq 0 && echo "Division par 0." && exit 1
   
-  analyseur_resultat=`expr $arg1 $1 $arg2 | bc -l`
+  analyseur_resultat=`echo "$arg1 $1 $arg2" | bc -l`
   # echo "<$analyseur_resultat>"
 }
 
@@ -160,8 +160,7 @@ do
     destBuffer="$destBuffer$scout"
   done
   
-  destBuffer="$destBuffer$slout"
-  
+  # destBuffer="$destBuffer$slout"
   
   destBuffer=`echo $destBuffer | sed "s|\(.*\)$scout.*|\1|"` 
   
