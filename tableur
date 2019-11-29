@@ -32,10 +32,14 @@ getValue() {
 
 calcul() {
   test $# -ne 3 && echo "calcul() a besoin de 3 paramètres." && exit 1
-  getValue $2 
-  local arg1="$analyseur_resultat"
-  getValue $3
-  local arg2="$analyseur_resultat"
+  local arg1
+  local arg2
+  analyseur $2 
+  arg1="$analyseur_resultat"
+  analyseur $3
+  arg2="$analyseur_resultat"
+
+  echo "<$arg1> <$arg2> <$*>"
   
   test $1 = "x" && analyseur_resultat=`expr $arg1 \* $arg2` && return 0
   test $1 = "/" -a $arg2 -eq 0 && echo "Division par 0." && exit 1
@@ -59,7 +63,7 @@ analyseur() {
       # echo $analyseur_funArg
       shell $analyseur_funArg;;
       # echo "res : <$analyseur_resultat>"
-    "+"|"-"|"x"|"/") calcul $analyseur_funName `echo "$analyseur_funArg" | tr ',' ' '`;;
+    "+"|"-"|"x"|"/"|"^") calcul $analyseur_funName `echo "$analyseur_funArg" | tr ',' ' '`;;
     *) analyseur_resultat=$1;;
     esac
   else
