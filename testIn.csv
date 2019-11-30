@@ -1,4 +1,4 @@
 1;2;3;4;=shell(expr 12 + 89)
 pour;=[l1c5];de;=+(5,8)
-un;deux;trois;quatre;=/([l1c4],[l2c2])
+un;=^(2,3);trois;quatre;=/([l1c4],[l2c2])
 6;7;8;9;0
