@@ -13,11 +13,13 @@ test $# -eq 0 && echo "Vérifiez les paramètres entrés. Merci." && exit 1
 #echo "Instauration du shebang !"
 errorMsg="Use : tableur [-in feuille] [-out resultat] [-scin sep] [-scout sep] [-slin sep] [-slout sep] [-inverse]"
 
-ln() {
-  test $# -ne 1 && echo "La fonction ln() demande 1 argument (pas plus)." && return 1
-  analyseur $1
+special_calcul() {
+  # echo "<$*>"
+  test $# -ne 2 && echo "La fonction special_calcul() demande 2 arguments." && return 1
+  analyseur $2
   local arg="$analyseur_resultat"
-  analyseur_resultat="`echo "l($arg)" | bc -l`"
+  test $1 = "ln" && analyseur_resultat="`echo "l($arg)" | bc -l`" && return 0
+  analyseur_resultat="`echo "$1($arg)" | bc -l`"
 }
 
 somme() {
@@ -29,7 +31,7 @@ somme() {
   local current_lineSize=`head -n$lineOfArg1 "$source" | tail -n1 | grep -o "[^$scin]*" | wc -l`
   local somme=0
 
-  echo "<$*>"
+  # echo "<$*>"
 
   while test $lineOfArg1 -ne $lineOfArg2 -o $colOfArg1 -ne $colOfArg2
   do
@@ -39,12 +41,10 @@ somme() {
     somme=`expr "$somme" + "$analyseur_resultat"`
     if test $colOfArg1 -ge $current_lineSize
     then
-    echo "1"
       lineOfArg1=`expr $lineOfArg1 + 1`
       colOfArg1=1
       current_lineSize=`head -n$lineOfArg1 "$source" | tail -n1 | grep -o "[^$scin]*" | wc -l`
     else
-      echo "2"
       colOfArg1=`expr $colOfArg1 + 1`
     fi
   done
@@ -100,8 +100,8 @@ analyseur() {
       shell $analyseur_funArg;;
     "+"|"-"|"x"|"/"|"^") 
       calcul $analyseur_funName `echo "$analyseur_funArg" | tr ',' ' '`;;
-    "ln") 
-      ln "`echo "$analyseur_funArg" | tr ',' ' '`";;
+    "ln"|"e"|"sqrt") 
+      special_calcul $analyseur_funName "`echo "$analyseur_funArg" | tr ',' ' '`";;
     "somme")
       somme `echo "$analyseur_funArg" | tr ',' ' '`;;
     *) 
@@ -181,7 +181,8 @@ echo "\n"
 nbLine=`wc -l < $source`
 destBuffer=""
 
-#  !!! FILE/ECHO VERSION !!! #
+# !!! FILE/ECHO VERSION !!! #
+echo "Traitement en cours..."
 while IFS=$slin read line
 do
 
@@ -197,9 +198,7 @@ do
     fi
     destBuffer="$destBuffer$scout"
   done
-  
-  # destBuffer="$destBuffer$slout"
-  
+    
   destBuffer=`echo $destBuffer | sed "s|\(.*\)$scout.*|\1|"` 
   
   destBuffer="$destBuffer$slout"
@@ -208,8 +207,9 @@ do
   # echo "<$destRes>"
   # echo "-"
 done < $source
+echo "Traitement terminé ! \n"
 echo "$destRes" > "$dest"
-destRes=`echo "$destRes" | tr '\r' '\n'`
+destRes=`echo "$destRes" | tr '\r' $slout`
 echo "$destRes" | cat -v
 
 echo "\nMerci d'avoir utilisé notre script ! Aurevoir !\n"
