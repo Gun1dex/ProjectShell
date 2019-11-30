@@ -62,6 +62,78 @@ somme() {
   analyseur_resultat=`expr "$somme" + "$analyseur_resultat"`
 }
 
+max() {
+  test $# -ne 2 && echo "La fonction max() a besoin de 2 arguments. <$*>" && return 1
+  local lineOfArg1=`echo "$1" | grep -o -E '[0-9]+' | head -n1`
+  local colOfArg1=`echo "$1" | grep -o -E '[0-9]+' | tail -n1`
+  local lineOfArg2=`echo "$2" | grep -o -E '[0-9]+' | head -n1`
+  local colOfArg2=`echo "$2" | grep -o -E '[0-9]+' | tail -n1`
+  local current_lineSize=`head -n$lineOfArg1 "$source" | tail -n1 | grep -o "[^$scin]*" | wc -l`
+  max_loopLength=0
+
+  getValue $1
+  local max="$analyseur_resultat"
+
+  # echo "<$*>"
+
+  while test $lineOfArg1 -ne $lineOfArg2 -o $colOfArg1 -ne $colOfArg2
+  do
+    # echo "<$lineOfArg1 | $colOfArg1>  <$lineOfArg2 | $colOfArg2>"
+    
+    if test $colOfArg1 -ge $current_lineSize
+    then
+      lineOfArg1=`expr $lineOfArg1 + 1`
+      colOfArg1=1
+      current_lineSize=`head -n$lineOfArg1 "$source" | tail -n1 | grep -o "[^$scin]*" | wc -l`
+    else
+      colOfArg1=`expr $colOfArg1 + 1`
+    fi
+    getValue "l$lineOfArg1 c$colOfArg1"
+    
+    test $max -lt $analyseur_resultat && max="$analyseur_resultat" && echo "swap $max <> $analyseur_resultat"
+
+    somme_loopLength=`expr $somme_loopLength + 1`
+  done
+
+  analyseur_resultat="$max"
+}
+
+min() {
+  test $# -ne 2 && echo "La fonction max() a besoin de 2 arguments. <$*>" && return 1
+  local lineOfArg1=`echo "$1" | grep -o -E '[0-9]+' | head -n1`
+  local colOfArg1=`echo "$1" | grep -o -E '[0-9]+' | tail -n1`
+  local lineOfArg2=`echo "$2" | grep -o -E '[0-9]+' | head -n1`
+  local colOfArg2=`echo "$2" | grep -o -E '[0-9]+' | tail -n1`
+  local current_lineSize=`head -n$lineOfArg1 "$source" | tail -n1 | grep -o "[^$scin]*" | wc -l`
+  min_loopLength=0
+
+  getValue $1
+  local min="$analyseur_resultat"
+
+  # echo "<$*>"
+
+  while test $lineOfArg1 -ne $lineOfArg2 -o $colOfArg1 -ne $colOfArg2
+  do
+    # echo "<$lineOfArg1 | $colOfArg1>  <$lineOfArg2 | $colOfArg2>"
+    
+    if test $colOfArg1 -ge $current_lineSize
+    then
+      lineOfArg1=`expr $lineOfArg1 + 1`
+      colOfArg1=1
+      current_lineSize=`head -n$lineOfArg1 "$source" | tail -n1 | grep -o "[^$scin]*" | wc -l`
+    else
+      colOfArg1=`expr $colOfArg1 + 1`
+    fi
+    getValue "l$lineOfArg1 c$colOfArg1"
+    
+    test $min -gt $analyseur_resultat && min="$analyseur_resultat" && echo "swap $min <> $analyseur_resultat"
+
+    somme_loopLength=`expr $somme_loopLength + 1`
+  done
+
+  analyseur_resultat="$min"
+}
+
 shell() {
   test $# -ne 1 && echo "Need one arg" && return 1
   shell_Arg=`echo $1 | tr '_' ' '`
@@ -114,6 +186,10 @@ analyseur() {
       somme `echo "$analyseur_funArg" | tr ',' ' '`;;
     "moyenne")
       moyenne `echo "$analyseur_funArg" | tr ',' ' '`;;
+    "max")
+      max `echo "$analyseur_funArg" | tr ',' ' '`;;
+    "min")
+      min `echo "$analyseur_funArg" | tr ',' ' '`;;
     *) 
       analyseur_resultat=$1;;
     esac
@@ -222,7 +298,7 @@ echo "$destRes" > "$dest"
 destRes=`echo "$destRes" | tr '\r' $slout`
 echo "$destRes" | cat -v
 
-echo "\nMerci d'avoir utilisé notre script ! Aurevoir !\n"
+echo "\nMerci d'avoir utilisé notre script ! \n"
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^ #
 
 # source_tmp="`cat -v "$source"`"
