@@ -147,9 +147,25 @@ getValue() {
   analyseur `echo "$analyseur_resultat" | tr ' ' '_'`
 }
 
+length() {
+  test $# -ne 1 && echo "length() a besoin de 1 argument." && exit 1
+  local arg1
+  analyseur $1
+  arg1="$analyseur_resultat"
+
+  analyseur_resultat=`echo -n $arg1 | wc -m`
+}
+
 concat() {
   test $# -ne 2 && echo "concat() a besoin de 2 arguments." && exit 1
-  analyseur_resultat="$1$2"
+  local arg1
+  local arg2
+  analyseur $1
+  arg1="$analyseur_resultat"
+  analyseur $2
+  arg2="$analyseur_resultat"
+
+  analyseur_resultat="$arg1$arg2"
 }
 
 calcul() {
@@ -197,6 +213,8 @@ analyseur() {
       min `echo "$analyseur_funArg" | tr ',' ' '`;;
     "concat")
       concat `echo "$analyseur_funArg" | tr ',' ' '`;;
+    "length")
+      length "`echo "$analyseur_funArg" | tr ',' ' '`";;
     *) 
       analyseur_resultat=$1;;
     esac
