@@ -1,4 +1,5 @@
 #!/bin/sh
+
 # Auteurs : 
 #   BENOIT Baptiste
 #   MONCHAUX Clément
@@ -7,19 +8,50 @@
 # L3 Informatique
 # Groupe TD2 TPC
 
-test $# -eq 0 && echo "Be careful kiddo" && exit 1
+test $# -eq 0 && echo "Vérifiez les paramètres entrés. Merci." && exit 1
 
 #echo "Instauration du shebang !"
 errorMsg="Use : tableur [-in feuille] [-out resultat] [-scin sep] [-scout sep] [-slin sep] [-slout sep] [-inverse]"
 
 ln() {
   test $# -ne 1 && echo "La fonction ln() demande 1 argument (pas plus)." && return 1
-  # echo "<$*>"
   analyseur $1
   local arg="$analyseur_resultat"
-  # echo "<$arg>"
   analyseur_resultat="`echo "l($arg)" | bc -l`"
-  # echo "<$analyseur_resultat>"
+}
+
+somme() {
+  test $# -ne 2 && echo "La fonction somme() a besoin de 2 arguments. <$*>" && return 1
+  local lineOfArg1=`echo "$1" | grep -o -E '[0-9]+' | head -n1`
+  local colOfArg1=`echo "$1" | grep -o -E '[0-9]+' | tail -n1`
+  local lineOfArg2=`echo "$2" | grep -o -E '[0-9]+' | head -n1`
+  local colOfArg2=`echo "$2" | grep -o -E '[0-9]+' | tail -n1`
+  local current_lineSize=`head -n$lineOfArg1 "$source" | tail -n1 | grep -o "[^$scin]*" | wc -l`
+  local somme=0
+
+  echo "<$*>"
+
+  while test $lineOfArg1 -ne $lineOfArg2 -o $colOfArg1 -ne $colOfArg2
+  do
+    # take the value before moving anything
+    # echo "<$lineOfArg1 | $colOfArg1>  <$lineOfArg2 | $colOfArg2>"
+    getValue "l$lineOfArg1 c$colOfArg1"
+    somme=`expr "$somme" + "$analyseur_resultat"`
+    if test $colOfArg1 -ge $current_lineSize
+    then
+    echo "1"
+      lineOfArg1=`expr $lineOfArg1 + 1`
+      colOfArg1=1
+      current_lineSize=`head -n$lineOfArg1 "$source" | tail -n1 | grep -o "[^$scin]*" | wc -l`
+    else
+      echo "2"
+      colOfArg1=`expr $colOfArg1 + 1`
+    fi
+  done
+  # take the very last value
+  getValue "l$lineOfArg1 c$colOfArg1"
+
+  analyseur_resultat=`expr "$somme" + "$analyseur_resultat"`
 }
 
 shell() {
@@ -36,7 +68,7 @@ getValue() {
 }
 
 calcul() {
-  test $# -ne 3 && echo "calcul() a besoin de 3 paramètres." && exit 1
+  test $# -ne 3 && echo "calcul() a besoin de 3 arguments." && exit 1
   local arg1
   local arg2
   analyseur $2 
@@ -62,27 +94,22 @@ analyseur() {
   # echo "<"`echo $analyseur_funName | grep -F -e "["`">"
   if test -z `echo $analyseur_funName | grep -F -e "["`
   then
-    # echo "il y pas crochet"
     analyseur_funArg=`echo "$1" | cut -d'(' -f2- | sed 's|\(.*\)).*|\1|'`
     case $analyseur_funName in
     "shell")
-      # echo $analyseur_funArg
       shell $analyseur_funArg;;
-      # echo "res : <$analyseur_resultat>"
-    "+"|"-"|"x"|"/"|"^") calcul $analyseur_funName `echo "$analyseur_funArg" | tr ',' ' '`;;
-    "ln") ln "`echo "$analyseur_funArg" | tr ',' ' '`";;
-    *) analyseur_resultat=$1;;
+    "+"|"-"|"x"|"/"|"^") 
+      calcul $analyseur_funName `echo "$analyseur_funArg" | tr ',' ' '`;;
+    "ln") 
+      ln "`echo "$analyseur_funArg" | tr ',' ' '`";;
+    "somme")
+      somme `echo "$analyseur_funArg" | tr ',' ' '`;;
+    *) 
+      analyseur_resultat=$1;;
     esac
   else
-    # echo "il y a crochet"
-    # analyseur_line=`echo "$analyseur_funName" | grep -o -E '[0-9]+' | head -n1`
-    # analyseur_col=`echo "$analyseur_funName" | grep -o -E '[0-9]+' | tail -n1`
-    # analyseur_resultat=`head -n"$analyseur_line" "$source" | tail -n1 | cut -d"$scin" -f"$analyseur_col"`
-    # analyseur `echo "$analyseur_resultat" | tr ' ' '_'`
     getValue $analyseur_funName
-    # echo "resultat à la ligne $analyseur_line colonne $analyseur_col : $analyseur_resultat"
   fi
-  # echo " "
 }
 
 #addition 1 2
@@ -183,11 +210,13 @@ do
 done < $source
 echo "$destRes" > "$dest"
 destRes=`echo "$destRes" | tr '\r' '\n'`
-# echo "$destRes" | tr '\r' '\n' | cat -v
-# Voir le cas '\t' !!!
 echo "$destRes" | cat -v
+
+echo "\nMerci d'avoir utilisé notre script ! Aurevoir !\n"
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^ #
 
+# source_tmp="`cat -v "$source"`"
+# echo $source_tmp
 
 #echo "$destBuffer" | cat -v
 #echo "$destBuffer" | tr -d '\r' | cat -v

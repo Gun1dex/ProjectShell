@@ -1,4 +1,4 @@
-1;2;3;4;=shell(expr 12 + 89)
+1;2;3;4;=shell(expr 12 + 89);=somme(l1c1,l1c4)
 pour;=[l1c5];de;=+(5,8)
 un;=^(2,3);trois;=ln([l1c2]);=/([l1c4],[l2c2])
 6;7;8;9;0
