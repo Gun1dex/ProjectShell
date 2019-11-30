@@ -22,6 +22,12 @@ special_calcul() {
   analyseur_resultat="`echo "$1($arg)" | bc -l`"
 }
 
+moyenne() {
+  test $# -ne 2 && echo "La fonction moyenne() a besoin de 2 arguments. <$*>" && return 1
+  somme $1 $2
+  analyseur_resultat=`echo "$analyseur_resultat / $somme_loopLength" | bc -l`
+}
+
 somme() {
   test $# -ne 2 && echo "La fonction somme() a besoin de 2 arguments. <$*>" && return 1
   local lineOfArg1=`echo "$1" | grep -o -E '[0-9]+' | head -n1`
@@ -30,6 +36,7 @@ somme() {
   local colOfArg2=`echo "$2" | grep -o -E '[0-9]+' | tail -n1`
   local current_lineSize=`head -n$lineOfArg1 "$source" | tail -n1 | grep -o "[^$scin]*" | wc -l`
   local somme=0
+  somme_loopLength=0
 
   # echo "<$*>"
 
@@ -47,6 +54,7 @@ somme() {
     else
       colOfArg1=`expr $colOfArg1 + 1`
     fi
+    somme_loopLength=`expr $somme_loopLength + 1`
   done
   # take the very last value
   getValue "l$lineOfArg1 c$colOfArg1"
@@ -104,6 +112,8 @@ analyseur() {
       special_calcul $analyseur_funName "`echo "$analyseur_funArg" | tr ',' ' '`";;
     "somme")
       somme `echo "$analyseur_funArg" | tr ',' ' '`;;
+    "moyenne")
+      moyenne `echo "$analyseur_funArg" | tr ',' ' '`;;
     *) 
       analyseur_resultat=$1;;
     esac
