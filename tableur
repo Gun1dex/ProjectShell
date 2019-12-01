@@ -288,6 +288,10 @@ analyseur() {
       somme `echo "$analyseur_funArg" | tr ',' ' '`;;
     "moyenne")
       moyenne `echo "$analyseur_funArg" | tr ',' ' '`;;
+    "variance")
+      variance `echo "$analyseur_funArg" | tr ',' ' '`;;
+    "ecarttype")
+      ecarttype `echo "$analyseur_funArg" | tr ',' ' '`;;
     "max")
       max `echo "$analyseur_funArg" | tr ',' ' '`;;
     "min")
@@ -339,7 +343,7 @@ do
   shift
   shift
 done
-echo "\n"
+# echo "\n"
 
 # les non-spécifié #
 test -z $scin && scin="\t" && echo "Default -scin => <$scin>"
@@ -350,11 +354,8 @@ test -z $inverse && inverse=0 && echo "Default -inverse => <$inverse>"
 # ---------------- #
 echo "\n"
 # test du fichier en arg '-in' #
-if test -n $source -a -e $source
+if test -z
 then
-  # echo "On lira <$source> plus tard"
-  stdin=0
-else
   # echo "On lira la sortie standard"
   stdin=1
   source_buffer=""
@@ -362,13 +363,21 @@ else
 
   while read line && test -n "$line"
   do
-    source_buffer="$source_buffer$line \n"
+    source_buffer="$source_buffer$line$slin"
   done
 
   random=`shuf -i 1-10000 -n 1`
+  # echo "<$random>"
   source="source_tmp_$random.csv"
-  touch $source
-  echo "`echo "$buffer" | sed "s|\(.*\)\n.*|\1|"`" > "$source"
+  # echo > $source
+  # echo "<$source>"
+  echo "`echo "$source_buffer" | sed "s|\(.*\)\n.*|\1|"`" > "$source"
+  # while [ ! -f $source ]; do sleep 1; done
+
+else 
+  # echo "On lira <$source> plus tard"
+  ! test -f $source && echo "$souce n'existe pas." && exit 1
+  stdin=0
 fi
 
 # echo "Note : Le fichier '-in' doit exister pour être utiliser."
