@@ -62,6 +62,48 @@ somme() {
   analyseur_resultat=`expr "$somme" + "$analyseur_resultat"`
 }
 
+variance(){
+  test $# -ne 2 && echo "La fonction variance() a besoin de 2 arguments. <$*>" && return 1
+  moyenne $1 $2
+  local moyenne="$analyseur_resultat"
+  local lineOfArg1=`echo "$1" | grep -o -E '[0-9]+' | head -n1`
+  local colOfArg1=`echo "$1" | grep -o -E '[0-9]+' | tail -n1`
+  local lineOfArg2=`echo "$2" | grep -o -E '[0-9]+' | head -n1`
+  local colOfArg2=`echo "$2" | grep -o -E '[0-9]+' | tail -n1`
+  local current_lineSize=`head -n$lineOfArg1 "$source" | tail -n1 | grep -o "[^$scin]*" | wc -l`
+  local somme_variance=0
+  somme_loopLength=0
+
+  # echo "<$*>"
+
+  while test $lineOfArg1 -ne $lineOfArg2 -o $colOfArg1 -ne $colOfArg2
+  do
+    # take the value before moving anything
+    # echo "<$lineOfArg1 | $colOfArg1>  <$lineOfArg2 | $colOfArg2>"
+    getValue "l$lineOfArg1 c$colOfArg1"
+    somme_variance=`expr "("$analyseur_resultat" - "$moyenne") * ("$analyseur_resultat" - "$moyenne") + $somme_variance"`
+    if test $colOfArg1 -ge $current_lineSize
+    then
+      lineOfArg1=`expr $lineOfArg1 + 1`
+      colOfArg1=1
+      current_lineSize=`head -n$lineOfArg1 "$source" | tail -n1 | grep -o "[^$scin]*" | wc -l`
+    else
+      colOfArg1=`expr $colOfArg1 + 1`
+    fi
+    somme_loopLength=`expr $somme_loopLength + 1`
+  done
+  # take the very last value
+  getValue "l$lineOfArg1 c$colOfArg1"
+
+  analyseur_resultat=`expr "("$analyseur_resultat" - "$moyenne") * ("$analyseur_resultat" - "$moyenne") + $somme_variance"`
+}
+
+ecarttype(){
+  variance $1 $2
+  local variance="$analyseur_resultat"
+  analyseur_resultat=`echo "sqrt($analyseur_resultat)" | bc -l`
+}
+
 max() {
   test $# -ne 2 && echo "La fonction max() a besoin de 2 arguments. <$*>" && return 1
   local lineOfArg1=`echo "$1" | grep -o -E '[0-9]+' | head -n1`
@@ -159,14 +201,30 @@ size() {
     analyseur $1
 
     arg1=`echo "$analyseur_resultat" | sed "s|\(.*\)$slout.*|\1|"`
-    echo "<$arg1>"
+    # echo "<$arg1>"
     ! test -e $arg1 && echo "<$arg1> ou <$1> n'est pas un fichier" && return 1
   fi
 
   # echo "<$arg1>"
   # echo "wc : `wc -c $arg1 | cut -d' ' -f1`"
   analyseur_resultat=`wc -c $arg1 | cut -d' ' -f1`
+}
 
+lines() {
+  test $# -ne 1 && echo "size() a besoin de 1 argument." && exit 1
+  local arg1=$1
+  
+  if ! test -e $1
+  then
+    analyseur $1
+
+    arg1=`echo "$analyseur_resultat" | sed "s|\(.*\)$slout.*|\1|"`
+    ! test -e $arg1 && echo "<$arg1> n'est pas un fichier" && return 1
+  fi
+
+  # echo "<$arg1>"
+  # echo "wc : `wc -c $arg1 | cut -d' ' -f1`"
+  analyseur_resultat=`wc -l $arg1 | cut -d' ' -f1`
 }
 
 length() {
@@ -293,21 +351,37 @@ test -z $inverse && inverse=0 && echo "Default -inverse => <$inverse>"
 echo "\n"
 # test du fichier en arg '-in' #
 if test -n $source -a -e $source
-then 
-  echo "On lira <$source> plus tard"
+then
+  # echo "On lira <$source> plus tard"
+  stdin=0
 else
-  echo "On lira la sortie standard"
+  # echo "On lira la sortie standard"
+  stdin=1
+  source_buffer=""
+  echo "Veuillez saisir les valeurs de votre tableur : \n"
+
+  while read line && test -n "$line"
+  do
+    source_buffer="$source_buffer$line \n"
+  done
+
+  random=`shuf -i 1-10000 -n 1`
+  source="source_tmp_$random.csv"
+  touch $source
+  echo "`echo "$buffer" | sed "s|\(.*\)\n.*|\1|"`" > "$source"
 fi
 
-echo "Note : Le fichier '-in' doit exister pour être utiliser."
+# echo "Note : Le fichier '-in' doit exister pour être utiliser."
 # ---------------------------- #
 echo "\n"
 # test du fichier en arg '-out' #
-if test -n $dest -a -e $dest
-then 
-  echo "Le résultat sera redirigé vers <$dest>"
-else
+if test -z $dest
+then
+  stdout=1
   echo "Le résultat sera affiché sur la sortie standard"
+else
+  stdout=0
+  echo "Le résultat sera redirigé vers <$dest>"
 fi
 
 echo "Note : Le fichier '-out' doit exister pour être utiliser."
@@ -329,7 +403,7 @@ do
     if test -z `echo "$i" | grep -o -E "="`
     then
       destBuffer="$destBuffer$i"
-      echo "<$i>"
+      # echo "<$i>"
     else
       analyseur $i
       destBuffer="$destBuffer$analyseur_resultat"
@@ -345,39 +419,20 @@ do
   # echo "<$destRes>"
   # echo "-"
 done < $source
+
+test $stdin -eq 1 && rm $source
+
 echo "Traitement terminé ! \n"
-echo "$destRes" > "$dest"
-destRes=`echo "$destRes" | tr '\r' $slout`
-echo "$destRes" | cat -v
+
+if test $stdout -eq 0
+then
+  echo "$destRes" > "$dest"
+  echo "Votre tableur calculé est disponible dans le fichier $dest !"
+else
+  destRes=`echo "$destRes" | tr '\r' $slout`
+  echo "$destRes" | cat -v
+fi
+
 
 echo "\nMerci d'avoir utilisé notre script ! \n"
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^ #
-
-# source_tmp="`cat -v "$source"`"
-# echo $source_tmp
-
-#echo "$destBuffer" | cat -v
-#echo "$destBuffer" | tr -d '\r' | cat -v
-
-# Number of cell in one line
-# echo `head -n1 "$source" | tail -n1 | grep -o "[^$scin]*" | wc -l`
-
-# Number of lines 
-# echo `wc -l < $source`
-
-# getFunName #
-# echo $1 | cut -d'=' -f2 | cut -d'(' -f1
-
-# getLine #
-# head -n[lineNumber] [File] | tail -n1
-
-# getCell #
-# head -n[lineNumber] [File] | tail -n1 | cut -d'[delimiter]' -f[cellNumber]
-
-# getCell from "l[number]c[number]" #
-#line=`echo "l1c3" | grep -o -E '[0-9]+' | head -n1`
-#col=`echo "l1c3" | grep -o -E '[0-9]+' | tail -n1`
-#echo "line <$line> and col <$col>"
-
-# check if fun needed #
-# test -z `echo "=somme(ddnfldsn)" | grep -o -E "="`
