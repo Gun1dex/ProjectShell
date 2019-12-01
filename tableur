@@ -248,6 +248,22 @@ concat() {
   analyseur_resultat="$arg1$arg2"
 }
 
+substitute() {
+  test $# -ne 3 && echo "subsitute() a besoin de 3 arguments." && exit 1
+  local target
+  local arg1
+  local arg2
+  
+  analyseur $1
+  target="$analyseur_resultat"
+  analyseur $2
+  arg1="$analyseur_resultat"
+  analyseur $3
+  arg2="$analyseur_resultat"
+
+  analyseur_resultat=`echo "$target" | sed -e "s/$arg1/$arg2/g"`
+}
+
 calcul() {
   test $# -ne 3 && echo "calcul() a besoin de 3 arguments." && exit 1
   local arg1
@@ -302,6 +318,8 @@ analyseur() {
       length "`echo "$analyseur_funArg" | tr ',' ' '`";;
     "size")
       size "`echo "$analyseur_funArg" | tr ',' ' '`";;
+    "substitute")
+      substitute `echo "$analyseur_funArg" | tr ',' ' '`;;
     *) 
       analyseur_resultat="$1";;
     esac
@@ -318,8 +336,8 @@ while test $# -ge 1
 do
   case $1 in
   "-in") 
-    source=$2
-    # echo "Dans la feuille <$2>";;
+    source=$2;;
+    # echo "Dans la feuille <$2>"
   "-out")
     dest=$2 
     echo "Résultat dans <$2>";;
