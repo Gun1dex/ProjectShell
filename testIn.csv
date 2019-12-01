@@ -1,4 +1,4 @@
-1;2;3;4;=shell(expr 12 + 89);=somme(l1c1,l1c4)
-=sqrt([l1c1]);=[l1c5];de;=+(5,8)
-un;=concat([l1c1],un);trois;=length([l1c5]);=/([l1c4],[l2c2])
+1;2;3;4;=shell(expr 12 + 89);/bin/ls;pouvoir
+=sqrt([l1c1]);=size(/bin/ls);de;=+(5,8)
+un;=concat([l1c1],un);trois;=length([l1c5])
 6;7;8;9;0;=min(l4c1,l4c5)

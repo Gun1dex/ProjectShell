@@ -90,7 +90,7 @@ max() {
     fi
     getValue "l$lineOfArg1 c$colOfArg1"
     
-    test $max -lt $analyseur_resultat && max="$analyseur_resultat" && echo "swap $max <> $analyseur_resultat"
+    test $max -lt $analyseur_resultat && max="$analyseur_resultat"
 
     somme_loopLength=`expr $somme_loopLength + 1`
   done
@@ -126,8 +126,7 @@ min() {
     fi
     getValue "l$lineOfArg1 c$colOfArg1"
     
-    test $min -gt $analyseur_resultat && min="$analyseur_resultat" && echo "swap $min <> $analyseur_resultat"
-
+    test $min -gt $analyseur_resultat && min="$analyseur_resultat"
     somme_loopLength=`expr $somme_loopLength + 1`
   done
 
@@ -141,10 +140,30 @@ shell() {
 }
 
 getValue() {
+  test $# -ne 1 && echo "getValue() a besoin de 1 argument." && exit 1
   local line=`echo "$1" | grep -o -E '[0-9]+' | head -n1`
   local col=`echo "$1" | grep -o -E '[0-9]+' | tail -n1`
+  # echo "<$*> <$line | $col>"
   analyseur_resultat=`head -n"$line" "$source" | tail -n1 | cut -d"$scin" -f"$col"`
   analyseur `echo "$analyseur_resultat" | tr ' ' '_'`
+  test -e "$analyseur_resultat" && echo "$analyseur_resultat existe."
+}
+
+size() {
+  test $# -ne 1 && echo "size() a besoin de 1 argument." && exit 1
+  local arg1=$1
+  
+  if ! test -e $1
+  then
+    analyseur $1
+    arg1="$analyseur_resultat"
+    ! test -e $arg1 && echo "<$analyseur_resultat> ou <$1> n'est pas un fichier" &&return 1
+  fi
+
+  # echo "<$arg1>"
+  # echo "wc : `wc -c $arg1 | cut -d' ' -f1`"
+  analyseur_resultat=`wc -c $arg1 | cut -d' ' -f1`
+
 }
 
 length() {
@@ -189,6 +208,7 @@ calcul() {
 analyseur() {
   test $# -ne 1 && echo "Et j'analyse quoi moi ?" && return 1
   test -z "`echo "$1" | grep -o -e "[^[:alnum:]]*"`" && analyseur_resultat="$1" && return 0
+  test -e $1 && analyseur_resultat="$1" && return 0
   analyseur_funName=`echo $1 | cut -d'=' -f2 | cut -d'(' -f1`
   # echo "funName : $analyseur_funName"
   # echo "arg : $1"
@@ -215,11 +235,14 @@ analyseur() {
       concat `echo "$analyseur_funArg" | tr ',' ' '`;;
     "length")
       length "`echo "$analyseur_funArg" | tr ',' ' '`";;
+    "size")
+      size "`echo "$analyseur_funArg" | tr ',' ' '`";;
     *) 
-      analyseur_resultat=$1;;
+      analyseur_resultat="$1";;
     esac
   else
-    getValue $analyseur_funName
+    # echo "analyseur : <$1>"
+    getValue $1
   fi
 }
 
