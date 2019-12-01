@@ -267,7 +267,7 @@ calcul() {
 }
 
 analyseur() {
-  test $# -ne 1 && echo "Et j'analyse quoi moi ?" && return 1
+  test $# -ne 1 && echo "analyseur() a besoin de 1 argument" && return 1
   test -z "`echo "$1" | grep -o -e "[^[:alnum:]]*"`" && analyseur_resultat="$1" && return 0
   test -e $1 && analyseur_resultat="$1" && return 0
   analyseur_funName=`echo $1 | cut -d'=' -f2 | cut -d'(' -f1`
@@ -319,7 +319,7 @@ do
   case $1 in
   "-in") 
     source=$2
-    echo "Dans la feuille <$2>";;
+    # echo "Dans la feuille <$2>";;
   "-out")
     dest=$2 
     echo "Résultat dans <$2>";;
@@ -350,15 +350,16 @@ test -z $scin && scin="\t" && echo "Default -scin => <$scin>"
 test -z $slin && slin="\n" && echo "Default -slin => <$slin>"
 test -z $scout && scout=$scin && echo "Default -scout => <$scout>"
 test -z $slout && slout=$slin && echo "Default -slout => <$slout>"
-test -z $inverse && inverse=0 && echo "Default -inverse => <$inverse>"
+# test -z $inverse && inverse=0 && echo "Default -inverse => <$inverse>"
 # ---------------- #
 echo "\n"
 # test du fichier en arg '-in' #
-if test -z
+if test -z $source || ! test -f $source
 then
   # echo "On lira la sortie standard"
   stdin=1
   source_buffer=""
+  ! test -f $source && echo "$source n'est pas accepté par le script."
   echo "Veuillez saisir les valeurs de votre tableur : \n"
 
   while read line && test -n "$line"
@@ -393,7 +394,6 @@ else
   echo "Le résultat sera redirigé vers <$dest>"
 fi
 
-echo "Note : Le fichier '-out' doit exister pour être utiliser."
 # ---------------------------- #
 
 echo "\n"
