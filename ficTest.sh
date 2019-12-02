@@ -11,13 +11,19 @@ do
   # echo "<$i> <$nbLine>"
 done < "testIn.csv"
 tmp_i=1
+
+resCat=`cat testIn.csv`
 while test "$tmp_i" -le "$i"
 do
-  echo `cat testIn.csv | cut -d';' -f$tmp_i -s | tr '\r' "$slout" | tr "$slout" "$scout" | sed "s|\(.*\)$scout.*|\1|"`
+  # echo `echo $resCat | cut -d';' -f$tmp_i -s | tr '\r' "$slout" | tr "$slout" "$scout" | sed "s|\(.*\)$scout.*|\1|"`
+  echo `echo "$resCat" | cut -d';' -f"$tmp_i" -s | tr '\r' "$slout" | tr "$slout" "$scout" | sed "s|\(.*\)[$scout].*|\1|"`
   tmp_i=`expr $tmp_i + 1`
 done
 
-
+# echo ""
+# resCat=`cat testIn.csv`
+# echo $resCat
+# echo ""
 
 # echo `cat testIn2.csv | cut -d';' -f$i -s | tr -d '\r'`
 # buffer=""
