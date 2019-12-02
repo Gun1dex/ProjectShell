@@ -188,7 +188,7 @@ getValue() {
   # echo "<$*> <$line | $col>"
   analyseur_resultat=`head -n"$line" "$source" | tail -n1 | cut -d"$scin" -f"$col"`
   # echo "<$analyseur_resultat>"
-  analyseur `echo "$analyseur_resultat" | tr ' ' '_' | sed -e 's/\r//g'`
+  analyseur `echo "$analyseur_resultat" | tr ' ' '_' | sed -e "s/\r//g"`
   # test -e "$analyseur_resultat" && echo "$analyseur_resultat existe."
 }
 
@@ -218,7 +218,7 @@ lines() {
   then
     analyseur $1
 
-    arg1=`echo "$analyseur_resultat" | sed "s|\(.*\)$slout.*|\1|"`
+    arg1=`echo "$analyseur_resultat" | sed "s|\(.*\)"$slout".*|\1|"`
     ! test -e $arg1 && echo "<$arg1> n'est pas un fichier" && return 1
   fi
 
@@ -336,22 +336,22 @@ while test $# -ge 1
 do
   case $1 in
   "-in") 
-    source=$2;;
+    source="$2";;
     # echo "Dans la feuille <$2>"
   "-out")
-    dest=$2 
+    dest="$2" 
     echo "Résultat dans <$2>";;
   "-scin") 
-    scin=$2
+    scin="$2"
     echo "Séparateur de col en source used <$2>";;
   "-slin")
-    slin=$2 
+    slin="$2" 
     echo "Séparateur de ligne en source used <$2>";;
   "-scout")
-    scout=$2 
+    scout="$2" 
     echo "Séparateur de col en dest used <$2>";;
   "-slout") 
-    slout=$2
+    slout="$2"
     echo "Séparateur de ligne en dest used <$2>";;
   "-inverse")
     inverse=1
@@ -364,10 +364,10 @@ done
 # echo "\n"
 
 # les non-spécifié #
-test -z $scin && scin="\t" && echo "Default -scin => <$scin>"
-test -z $slin && slin="\n" && echo "Default -slin => <$slin>"
-test -z $scout && scout=$scin && echo "Default -scout => <$scout>"
-test -z $slout && slout=$slin && echo "Default -slout => <$slout>"
+test -z "$scin" && scin="\t" && echo "Default -scin => <$scin>"
+test -z "$slin" && slin="\n" && echo "Default -slin => <$slin>"
+test -z "$scout" && scout="$scin" && echo "Default -scout => <$scout>"
+test -z "$slout" && slout="$slin" && echo "Default -slout => <$slout>"
 # test -z $inverse && inverse=0 && echo "Default -inverse => <$inverse>"
 # ---------------- #
 echo "\n"
@@ -386,13 +386,8 @@ then
   done
 
   random=`shuf -i 1-10000 -n 1`
-  # echo "<$random>"
   source="source_tmp_$random.csv"
-  # echo > $source
-  # echo "<$source>"
   echo "`echo "$source_buffer" | sed "s|\(.*\)\n.*|\1|"`" > "$source"
-  # while [ ! -f $source ]; do sleep 1; done
-
 else 
   # echo "On lira <$source> plus tard"
   ! test -f $source && echo "$souce n'existe pas." && exit 1
@@ -426,19 +421,21 @@ do
 
   for i in `echo $line | grep -o -e "[^$scin]*" | tr ' ' '_'`
   do
-    i=`echo "$i" | sed -e 's/\r//g'`
+    i=`echo "$i" | sed -e "s/\r//g"`
     if test -z `echo "$i" | grep -o -E "="`
     then
       destBuffer="$destBuffer$i"
-      # echo "<$i>"
     else
       analyseur $i
       destBuffer="$destBuffer$analyseur_resultat"
     fi
+      # echo "<$i>"
     destBuffer="$destBuffer$scout"
   done
-    
-  destBuffer=`echo $destBuffer | sed "s|\(.*\)$scout.*|\1|"` 
+  
+  # must put [] around $scout in case it contains a whitespace 
+  # which makes an error in the expression.
+  destBuffer=`echo $destBuffer | sed "s|\(.*\)[$scout].*|\1|"` 
   
   destBuffer="$destBuffer$slout"
   destRes="$destRes$destBuffer"

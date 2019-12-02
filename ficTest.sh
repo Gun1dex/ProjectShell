@@ -1,5 +1,6 @@
 #!/bin/sh
-
+slout='\n'
+scout=';'
 i=0
 while read IFS='\n' line
 do
@@ -8,11 +9,11 @@ do
   nbLine=`echo "$line" | tr ';' '\n' | wc -l`
   test "$i" -lt "$nbLine" && i=$nbLine
   # echo "<$i> <$nbLine>"
-done < "testIn2.csv"
+done < "testIn.csv"
 tmp_i=1
 while test "$tmp_i" -le "$i"
 do
-  echo `cat testIn2.csv | cut -d';' -f$tmp_i -s | tr '\r' '\n' | tr '\n' ';'`
+  echo `cat testIn.csv | cut -d';' -f$tmp_i -s | tr '\r' "$slout" | tr "$slout" "$scout" | sed "s|\(.*\)$scout.*|\1|"`
   tmp_i=`expr $tmp_i + 1`
 done
 
