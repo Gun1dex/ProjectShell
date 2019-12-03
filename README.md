@@ -1,12 +1,18 @@
 # ProjectShell
 
-Mettre en oeuvre nos compétences dans le cadre d'un projet très ludique.
+    L’objectif de ce projet est de réaliser en shell (/bin/sh) un mini tableur. Ce tableur prendra en paramètre une feuille de calculs et devra fournir en retour le tableau complètement renseigné.
 
 ## Auteurs
 
 SEDDAR Naïm</br>
 MONCHAUX Clément</br>
 BENOIT Baptiste</br>
+
+## Execution
+
+```bash
+./tableur [-in feuille] [-out résultat] [-scin sep] [-scout sep] [-slin sep] [-slout sep] [-inverse] 
+```
 
 ## Fonctionalités implémentées
 - **[cel]** : permet d’obtenir la valeur de la cellule cel
@@ -32,10 +38,9 @@ BENOIT Baptiste</br>
 - **shell(val)** : remplace le contenu de la cellule par le résultat de la commande val
 
 ## Difficultés recontrées
+Bon Naïm je te laisse raconter ta vie ici ...
 
 ## Par de travail
-Nom | Prénom | Part de travail
-- |:- | -:
-SEDDAR | Naïm | 2%
-MONCHAUX | Clément | 49%
-BENOIT | Baptiste | 49%
+SEDDAR  Naïm - 2%</br>
+MONCHAUX  Clément - 2%</br>
+BENOIT  Baptiste - 2%</br>
