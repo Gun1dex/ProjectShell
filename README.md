@@ -40,7 +40,7 @@ tableur [-in feuille] [-out résultat] [-scin sep] [-scout sep] [-slin sep] [-sl
 ## Difficultés recontrées
 Bon Naïm je te laisse raconter ta vie ici ...
 
-## Par de travail
-SEDDAR  Naïm - 2%</br>
-MONCHAUX  Clément - 2%</br>
-BENOIT  Baptiste - 2%</br>
+## Part de travail
+SEDDAR  Naïm - 33%</br>
+MONCHAUX  Clément - 33%</br>
+BENOIT  Baptiste - 33%</br>
