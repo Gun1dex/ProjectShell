@@ -1,4 +1,4 @@
-# ProjectShell
+# Projet Unix & Shell
 
 L’objectif de ce projet est de réaliser en shell (/bin/sh) un mini tableur. Ce tableur prendra en paramètre une feuille de calculs et devra fournir en retour le tableau complètement renseigné.
 
@@ -11,7 +11,7 @@ BENOIT Baptiste</br>
 ## Execution
 
 ```bash
-tableur [-in feuille] [-out résultat] [-scin sep] [-scout sep] [-slin sep] [-slout sep] [-inverse] 
+./tableur [-in feuille] [-out résultat] [-scin sep] [-scout sep] [-slin sep] [-slout sep] [-inverse] 
 ```
 
 ## Fonctionalités implémentées
