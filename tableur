@@ -8,10 +8,10 @@
 # L3 Informatique
 # Groupe TD2 TPC
 
-test $# -eq 0 && echo "Vérifiez les paramètres entrés. Merci." && exit 1
+errorMsg="Utilisation : tableur [-in feuille] [-out resultat] [-scin sep] [-scout sep] [-slin sep] [-slout sep] [-inverse]"
+test $# -eq 0 && echo "Vérifiez les paramètres entrés. Merci." && echo "$errorMsg" && exit 1
 
 #echo "Instauration du shebang !"
-errorMsg="Use : tableur [-in feuille] [-out resultat] [-scin sep] [-scout sep] [-slin sep] [-slout sep] [-inverse]"
 
 special_calcul() {
   # echo "<$*>"
