@@ -34,6 +34,8 @@ BENOIT Baptiste</br>
 ## Difficultés recontrées
 
 ## Par de travail
-SEDDAR Naïm</br>
-MONCHAUX Clément</br>
-BENOIT Baptiste</br>
+Nom | Prénom | Part de travail
+- |:- | -:
+SEDDAR | Naïm | 2%
+MONCHAUX | Clément | 49%
+BENOIT | Baptiste | 49%
