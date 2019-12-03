@@ -73,21 +73,22 @@ variance(){
   do
     # take the value before moving anything
     getValue "l$lineOfArg1 c$colOfArg1"
-    somme_variance=`expr "("$analyseur_resultat" - "$moyenne") * ("$analyseur_resultat" - "$moyenne") + $somme_variance"`
+    somme_variance="`echo "("$analyseur_resultat" - "$moyenne") * ("$analyseur_resultat" - "$moyenne") + $somme_variance" | bc -l`"
     if test $colOfArg1 -ge $current_lineSize
     then
-      lineOfArg1=`expr $lineOfArg1 + 1`
+      lineOfArg1="`expr $lineOfArg1 + 1`"
       colOfArg1=1
-      current_lineSize=`head -n$lineOfArg1 "$source" | tail -n1 | grep -o "[^$scin]*" | wc -l`
+      current_lineSize="`head -n$lineOfArg1 "$source" | tail -n1 | grep -o "[^$scin]*" | wc -l`"
     else
-      colOfArg1=`expr $colOfArg1 + 1`
+      colOfArg1="`expr $colOfArg1 + 1`"
     fi
-    somme_loopLength=`expr $somme_loopLength + 1`
+    somme_loopLength="`expr $somme_loopLength + 1`"
   done
   # take the very last value
   getValue "l$lineOfArg1 c$colOfArg1"
 
-  analyseur_resultat=`expr "("$analyseur_resultat" - "$moyenne") * ("$analyseur_resultat" - "$moyenne") + $somme_variance"`
+  somme_variance="`echo "("$analyseur_resultat" - "$moyenne") * ("$analyseur_resultat" - "$moyenne") + $somme_variance" | bc -l`"
+  analyseur_resultat="`echo "$somme_variance / ($somme_loopLength + 2)" | bc -l`"
 }
 
 ecarttype() {
