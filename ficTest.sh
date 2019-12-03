@@ -4,8 +4,6 @@ scout=';'
 i=0
 while read IFS='\n' line
 do
-  # echo `cat testIn2.csv | cut -d';' -f$i -s | tr -d '\r'`
-  # i=`expr $i + 1`
   nbLine=`echo "$line" | tr ';' '\n' | wc -l`
   test "$i" -lt "$nbLine" && i=$nbLine
   # echo "<$i> <$nbLine>"
