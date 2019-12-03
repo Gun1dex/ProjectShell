@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Auteurs : 
+# Auteurs :
 #   BENOIT Baptiste
 #   MONCHAUX Clément
 #   SEDDAR Naïm
@@ -121,7 +121,7 @@ max() {
   while test $lineOfArg1 -ne $lineOfArg2 -o $colOfArg1 -ne $colOfArg2
   do
     # echo "<$lineOfArg1 | $colOfArg1>  <$lineOfArg2 | $colOfArg2>"
-    
+
     if test $colOfArg1 -ge $current_lineSize
     then
       lineOfArg1=`expr $lineOfArg1 + 1`
@@ -131,7 +131,7 @@ max() {
       colOfArg1=`expr $colOfArg1 + 1`
     fi
     getValue "l$lineOfArg1 c$colOfArg1"
-    
+
     test $max -lt $analyseur_resultat && max="$analyseur_resultat"
 
     somme_loopLength=`expr $somme_loopLength + 1`
@@ -157,7 +157,7 @@ min() {
   while test $lineOfArg1 -ne $lineOfArg2 -o $colOfArg1 -ne $colOfArg2
   do
     # echo "<$lineOfArg1 | $colOfArg1>  <$lineOfArg2 | $colOfArg2>"
-    
+
     if test $colOfArg1 -ge $current_lineSize
     then
       lineOfArg1=`expr $lineOfArg1 + 1`
@@ -167,7 +167,7 @@ min() {
       colOfArg1=`expr $colOfArg1 + 1`
     fi
     getValue "l$lineOfArg1 c$colOfArg1"
-    
+
     test $min -gt $analyseur_resultat && min="$analyseur_resultat"
     somme_loopLength=`expr $somme_loopLength + 1`
   done
@@ -195,7 +195,7 @@ getValue() {
 size() {
   test $# -ne 1 && echo "size() a besoin de 1 argument." && exit 1
   local arg1=$1
-  
+
   if ! test -e $1
   then
     analyseur $1
@@ -213,7 +213,7 @@ size() {
 lines() {
   test $# -ne 1 && echo "size() a besoin de 1 argument." && exit 1
   local arg1=$1
-  
+
   if ! test -e $1
   then
     analyseur $1
@@ -253,7 +253,7 @@ substitute() {
   local target
   local arg1
   local arg2
-  
+
   analyseur $1
   target="$analyseur_resultat"
   analyseur $2
@@ -268,16 +268,16 @@ calcul() {
   test $# -ne 3 && echo "calcul() a besoin de 3 arguments." && exit 1
   local arg1
   local arg2
-  analyseur $2 
+  analyseur $2
   arg1="$analyseur_resultat"
   analyseur $3
   arg2="$analyseur_resultat"
 
   # echo "<$arg1> <$arg2> <$*>"
-  
+
   test $1 = "x" && analyseur_resultat=`echo "$arg1 * $arg2" | bc -l` && return 0
   test $1 = "/" -a $arg2 -eq 0 && echo "Division par 0." && exit 1
-  
+
   analyseur_resultat=`echo "$arg1 $1 $arg2" | bc -l`
   # echo "<$analyseur_resultat>"
 }
@@ -296,9 +296,9 @@ analyseur() {
     case $analyseur_funName in
     "shell")
       shell $analyseur_funArg;;
-    "+"|"-"|"x"|"/"|"^") 
+    "+"|"-"|"x"|"/"|"^")
       calcul $analyseur_funName `echo "$analyseur_funArg" | tr ',' ' '`;;
-    "ln"|"e"|"sqrt") 
+    "ln"|"e"|"sqrt")
       special_calcul $analyseur_funName "`echo "$analyseur_funArg" | tr ',' ' '`";;
     "somme")
       somme `echo "$analyseur_funArg" | tr ',' ' '`;;
@@ -320,7 +320,7 @@ analyseur() {
       size "`echo "$analyseur_funArg" | tr ',' ' '`";;
     "substitute")
       substitute `echo "$analyseur_funArg" | tr ',' ' '`;;
-    *) 
+    *)
       analyseur_resultat="$1";;
     esac
   else
@@ -335,22 +335,22 @@ analyseur() {
 while test $# -ge 1
 do
   case $1 in
-  "-in") 
+  "-in")
     source="$2";;
     # echo "Dans la feuille <$2>"
   "-out")
-    dest="$2" 
+    dest="$2"
     echo "Résultat dans <$2>";;
-  "-scin") 
+  "-scin")
     scin="$2"
     echo "Séparateur de col en source used <$2>";;
   "-slin")
-    slin="$2" 
+    slin="$2"
     echo "Séparateur de ligne en source used <$2>";;
   "-scout")
-    scout="$2" 
+    scout="$2"
     echo "Séparateur de col en dest used <$2>";;
-  "-slout") 
+  "-slout")
     slout="$2"
     echo "Séparateur de ligne en dest used <$2>";;
   "-inverse")
@@ -389,7 +389,7 @@ then
   random=`shuf -i 1-10000 -n 1`
   source="source_tmp_$random.csv"
   echo "`echo "$source_buffer" | sed "s|\(.*\)\n.*|\1|"`" > "$source"
-else 
+else
   # echo "On lira <$source> plus tard"
   ! test -f $source && echo "$souce n'existe pas." && exit 1
   stdin=0
@@ -423,6 +423,7 @@ do
   for i in `echo $line | grep -o -e "[^$scin]*" | tr ' ' '_'`
   do
     i=`echo "$i" | sed -e "s/\r//g"`
+    # echo "<$i>"
     if test -z `echo "$i" | grep -o -E "="`
     then
       destBuffer="$destBuffer$i"
@@ -430,14 +431,14 @@ do
       analyseur $i
       destBuffer="$destBuffer$analyseur_resultat"
     fi
-      # echo "<$i>"
+
     destBuffer="$destBuffer$scout"
   done
-  
-  # must put [] around $scout in case it contains a whitespace 
+
+  # must put [] around $scout in case it contains a whitespace
   # which makes an error in the expression.
-  destBuffer=`echo $destBuffer | sed "s|\(.*\)[$scout].*|\1|"` 
-  
+  destBuffer=`echo $destBuffer | sed "s|\(.*\)[$scout].*|\1|"`
+
   destBuffer="$destBuffer$slout"
   destRes="$destRes$destBuffer"
   destBuffer=""
@@ -447,10 +448,10 @@ done < $source
 
 
 echo "Traitement terminé ! \n"
-# echo "Inversion <$inverse>"
+# ~~~ Inversion lignes/colonnes ~~~ #
 if test $inverse -eq 1
 then
-  # echo "As above so below !"
+  echo "Transposition de la feuille..."
   # echo "<$destRes>"
   i=0
   while read IFS="$slin" line
@@ -464,10 +465,11 @@ then
   while test "$tmp_i" -le "$i"
   do
     destBuffer=""
-    destBuffer=`echo "$destRes_tmp" | cut -d$scout -f"$tmp_i" -s | tr '\r' "$slout" | tr "$slout" "$scout" | sed "s|\(.*\)["$scout"].*|\1|"`
+    destBuffer=`echo "$destRes_tmp" | cut -d"$scout" -f"$tmp_i" -s | tr '\r' "$slout" | tr "$slout" "$scout" | sed "s|\(.*\)["$scout"].*|\1|"`
     destRes="$destRes$destBuffer$slout"
     tmp_i=`expr $tmp_i + 1`
   done
+  echo "Transposition terminé !\n"
 fi
 
 # Delete the temporary source file
