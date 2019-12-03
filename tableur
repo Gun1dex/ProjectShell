@@ -8,14 +8,12 @@
 # L3 Informatique
 # Groupe TD2 TPC
 
-test $# -eq 0 && echo "Vérifiez les paramètres entrés. Merci." && exit 1
+errorMsg="Utilisation : ./tableur [-in feuille] [-out resultat] [-scin sep] [-scout sep] [-slin sep] [-slout sep] [-inverse]"
+test $# -eq 0 && echo "Veuillez vérifier les paramètres entrés.\n$errorMsg" && exit 1
 
-#echo "Instauration du shebang !"
-errorMsg="Use : tableur [-in feuille] [-out resultat] [-scin sep] [-scout sep] [-slin sep] [-slout sep] [-inverse]"
 
 special_calcul() {
-  # echo "<$*>"
-  test $# -ne 2 && echo "La fonction special_calcul() demande 2 arguments." && return 1
+  test $# -ne 2 && echo "La fonction special_calcul() demande 2 arguments.\n <$i>" && exit 1
   analyseur $2
   local arg="$analyseur_resultat"
   test $1 = "ln" && analyseur_resultat="`echo "l($arg)" | bc -l`" && return 0
@@ -23,13 +21,13 @@ special_calcul() {
 }
 
 moyenne() {
-  test $# -ne 2 && echo "La fonction moyenne() a besoin de 2 arguments. <$*>" && return 1
+  test $# -ne 2 && echo "La fonction moyenne() a besoin de 2 arguments. <$i>" && exit 1
   somme $1 $2
   analyseur_resultat=`echo "$analyseur_resultat / $somme_loopLength" | bc -l`
 }
 
 somme() {
-  test $# -ne 2 && echo "La fonction somme() a besoin de 2 arguments. <$*>" && return 1
+  test $# -ne 2 && echo "La fonction somme() a besoin de 2 arguments. <$i>" && exit 1
   local lineOfArg1=`echo "$1" | grep -o -E '[0-9]+' | head -n1`
   local colOfArg1=`echo "$1" | grep -o -E '[0-9]+' | tail -n1`
   local lineOfArg2=`echo "$2" | grep -o -E '[0-9]+' | head -n1`
@@ -38,12 +36,9 @@ somme() {
   local somme=0
   somme_loopLength=0
 
-  # echo "<$*>"
-
   while test $lineOfArg1 -ne $lineOfArg2 -o $colOfArg1 -ne $colOfArg2
   do
     # take the value before moving anything
-    # echo "<$lineOfArg1 | $colOfArg1>  <$lineOfArg2 | $colOfArg2>"
     getValue "l$lineOfArg1 c$colOfArg1"
     somme=`expr "$somme" + "$analyseur_resultat"`
     if test $colOfArg1 -ge $current_lineSize
@@ -63,7 +58,7 @@ somme() {
 }
 
 variance(){
-  test $# -ne 2 && echo "La fonction variance() a besoin de 2 arguments. <$*>" && return 1
+  test $# -ne 2 && echo "La fonction variance() a besoin de 2 arguments. <$i>" && exit 1
   moyenne $1 $2
   local moyenne="$analyseur_resultat"
   local lineOfArg1=`echo "$1" | grep -o -E '[0-9]+' | head -n1`
@@ -74,12 +69,9 @@ variance(){
   local somme_variance=0
   somme_loopLength=0
 
-  # echo "<$*>"
-
   while test $lineOfArg1 -ne $lineOfArg2 -o $colOfArg1 -ne $colOfArg2
   do
     # take the value before moving anything
-    # echo "<$lineOfArg1 | $colOfArg1>  <$lineOfArg2 | $colOfArg2>"
     getValue "l$lineOfArg1 c$colOfArg1"
     somme_variance=`expr "("$analyseur_resultat" - "$moyenne") * ("$analyseur_resultat" - "$moyenne") + $somme_variance"`
     if test $colOfArg1 -ge $current_lineSize
@@ -98,14 +90,15 @@ variance(){
   analyseur_resultat=`expr "("$analyseur_resultat" - "$moyenne") * ("$analyseur_resultat" - "$moyenne") + $somme_variance"`
 }
 
-ecarttype(){
+ecarttype() {
+  test $# -ne 2 && echo "La fonction ecarttype() a besoin de 2 arguments.\n <$i>" && exit 1
   variance $1 $2
   local variance="$analyseur_resultat"
-  analyseur_resultat=`echo "sqrt($analyseur_resultat)" | bc -l`
+  analyseur_resultat=`echo "sqrt("$analyseur_resultat")" | bc -l`
 }
 
 max() {
-  test $# -ne 2 && echo "La fonction max() a besoin de 2 arguments. <$*>" && return 1
+  test $# -ne 2 && echo "La fonction max() a besoin de 2 arguments.\n <$i>" && exit 1
   local lineOfArg1=`echo "$1" | grep -o -E '[0-9]+' | head -n1`
   local colOfArg1=`echo "$1" | grep -o -E '[0-9]+' | tail -n1`
   local lineOfArg2=`echo "$2" | grep -o -E '[0-9]+' | head -n1`
@@ -116,11 +109,8 @@ max() {
   getValue $1
   local max="$analyseur_resultat"
 
-  # echo "<$*>"
-
   while test $lineOfArg1 -ne $lineOfArg2 -o $colOfArg1 -ne $colOfArg2
   do
-    # echo "<$lineOfArg1 | $colOfArg1>  <$lineOfArg2 | $colOfArg2>"
 
     if test $colOfArg1 -ge $current_lineSize
     then
@@ -141,7 +131,7 @@ max() {
 }
 
 min() {
-  test $# -ne 2 && echo "La fonction max() a besoin de 2 arguments. <$*>" && return 1
+  test $# -ne 2 && echo "La fonction max() a besoin de 2 arguments.\n <$i>" && exit 1
   local lineOfArg1=`echo "$1" | grep -o -E '[0-9]+' | head -n1`
   local colOfArg1=`echo "$1" | grep -o -E '[0-9]+' | tail -n1`
   local lineOfArg2=`echo "$2" | grep -o -E '[0-9]+' | head -n1`
@@ -152,11 +142,8 @@ min() {
   getValue $1
   local min="$analyseur_resultat"
 
-  # echo "<$*>"
-
   while test $lineOfArg1 -ne $lineOfArg2 -o $colOfArg1 -ne $colOfArg2
   do
-    # echo "<$lineOfArg1 | $colOfArg1>  <$lineOfArg2 | $colOfArg2>"
 
     if test $colOfArg1 -ge $current_lineSize
     then
@@ -176,59 +163,53 @@ min() {
 }
 
 shell() {
-  test $# -ne 1 && echo "Need one arg" && return 1
+  test $# -ne 1 && echo "shell() a besoin de 1 argument.\n <$i>" && exit 1
+  
   shell_Arg=`echo $1 | tr '_' ' '`
   analyseur_resultat="`$shell_Arg`"
 }
 
 getValue() {
-  test $# -ne 1 && echo "getValue() a besoin de 1 argument." && exit 1
+  test $# -ne 1 && echo "getValue() a besoin de 1 argument.\n <$i>" && exit 1
+
   local line=`echo "$1" | grep -o -E '[0-9]+' | head -n1`
   local col=`echo "$1" | grep -o -E '[0-9]+' | tail -n1`
-  # echo "<$*> <$line | $col>"
+
   analyseur_resultat=`head -n"$line" "$source" | tail -n1 | cut -d"$scin" -f"$col"`
-  # echo "<$analyseur_resultat>"
   analyseur `echo "$analyseur_resultat" | tr ' ' '_' | sed -e "s/\r//g"`
-  # test -e "$analyseur_resultat" && echo "$analyseur_resultat existe."
 }
 
 size() {
-  test $# -ne 1 && echo "size() a besoin de 1 argument." && exit 1
-  local arg1=$1
+  test $# -ne 1 && echo "size() a besoin de 1 argument.\n <$i>" && exit 1
+  local arg1="$1"
 
-  if ! test -e $1
+  if ! test -e "$1"
   then
-    analyseur $1
-
-    arg1=`echo "$analyseur_resultat" | sed "s|\(.*\)$slout.*|\1|"`
-    # echo "<$arg1>"
-    ! test -e $arg1 && echo "<$arg1> ou <$1> n'est pas un fichier" && return 1
+    analyseur "$1"
+    arg1=`echo "$analyseur_resultat" | sed "s|\(.*\)$slin.*|\1|"`
+    ! test -e $arg1 && echo "! <$arg1> ou <$1> n'est pas un fichier" && return 1
   fi
 
-  # echo "<$arg1>"
-  # echo "wc : `wc -c $arg1 | cut -d' ' -f1`"
   analyseur_resultat=`wc -c $arg1 | cut -d' ' -f1`
 }
 
 lines() {
-  test $# -ne 1 && echo "size() a besoin de 1 argument." && exit 1
+  test $# -ne 1 && echo "size() a besoin de 1 argument.\n <$i>" && exit 1
   local arg1=$1
 
   if ! test -e $1
   then
     analyseur $1
 
-    arg1=`echo "$analyseur_resultat" | sed "s|\(.*\)"$slout".*|\1|"`
+    arg1=`echo "$analyseur_resultat" | sed "s|\(.*\)"$slin".*|\1|"`
     ! test -e $arg1 && echo "<$arg1> n'est pas un fichier" && return 1
   fi
 
-  # echo "<$arg1>"
-  # echo "wc : `wc -c $arg1 | cut -d' ' -f1`"
   analyseur_resultat=`wc -l $arg1 | cut -d' ' -f1`
 }
 
 length() {
-  test $# -ne 1 && echo "length() a besoin de 1 argument." && exit 1
+  test $# -ne 1 && echo "length() a besoin de 1 argument.\n <$i>" && exit 1
   local arg1
   analyseur $1
   arg1="$analyseur_resultat"
@@ -237,7 +218,7 @@ length() {
 }
 
 concat() {
-  test $# -ne 2 && echo "concat() a besoin de 2 arguments." && exit 1
+  test $# -ne 2 && echo "concat() a besoin de 2 arguments.\n <$i>" && exit 1
   local arg1
   local arg2
   analyseur $1
@@ -249,7 +230,7 @@ concat() {
 }
 
 substitute() {
-  test $# -ne 3 && echo "subsitute() a besoin de 3 arguments." && exit 1
+  test $# -ne 3 && echo "subsitute() a besoin de 3 arguments.\n <$i>" && exit 1
   local target
   local arg1
   local arg2
@@ -261,11 +242,11 @@ substitute() {
   analyseur $3
   arg2="$analyseur_resultat"
 
-  analyseur_resultat=`echo "$target" | sed -e "s/$arg1/$arg2/g"`
+  analyseur_resultat=`echo "$target" | sed -e "s/"$arg1"/"$arg2"/g"`
 }
 
 calcul() {
-  test $# -ne 3 && echo "calcul() a besoin de 3 arguments." && exit 1
+  test $# -ne 3 && echo "calcul() a besoin de 3 arguments.\n <$i>" && exit 1
   local arg1
   local arg2
   analyseur $2
@@ -273,24 +254,18 @@ calcul() {
   analyseur $3
   arg2="$analyseur_resultat"
 
-  # echo "<$arg1> <$arg2> <$*>"
-
   test $1 = "x" && analyseur_resultat=`echo "$arg1 * $arg2" | bc -l` && return 0
   test $1 = "/" -a $arg2 -eq 0 && echo "Division par 0." && exit 1
 
   analyseur_resultat=`echo "$arg1 $1 $arg2" | bc -l`
-  # echo "<$analyseur_resultat>"
 }
 
 analyseur() {
-  test $# -ne 1 && echo "analyseur() a besoin de 1 argument" && return 1
-  test -z "`echo "$1" | grep -o -e "[^[:alnum:]]*"`" && analyseur_resultat="$1" && return 0
+  test $# -ne 1 && echo "analyseur() a besoin de 1 argument.\n <$i>" && exit 1
   test -e $1 && analyseur_resultat="$1" && return 0
   analyseur_funName=`echo $1 | cut -d'=' -f2 | cut -d'(' -f1`
-  # echo "funName : $analyseur_funName"
-  # echo "arg : $1"
-  # echo "<"`echo $analyseur_funName | grep -F -e "["`">"
-  if test -z `echo $analyseur_funName | grep -F -e "["`
+
+  if test -z "`echo $analyseur_funName | grep -o -e "\[*l[0-9]*\c[0-9]*\]*"`"
   then
     analyseur_funArg=`echo "$1" | cut -d'(' -f2- | sed 's|\(.*\)).*|\1|'`
     case $analyseur_funName in
@@ -324,54 +299,48 @@ analyseur() {
       analyseur_resultat="$1";;
     esac
   else
-    # echo "analyseur : <$1>"
     getValue $1
   fi
 }
 
-#addition 1 2
-#echo $add
 
 while test $# -ge 1
 do
   case $1 in
   "-in")
     source="$2";;
-    # echo "Dans la feuille <$2>"
+
   "-out")
-    dest="$2"
-    echo "Résultat dans <$2>";;
+    dest="$2";;
+
   "-scin")
-    scin="$2"
-    echo "Séparateur de col en source used <$2>";;
+    scin="$2";;
+
   "-slin")
-    slin="$2"
-    echo "Séparateur de ligne en source used <$2>";;
+    slin="$2";;
+
   "-scout")
-    scout="$2"
-    echo "Séparateur de col en dest used <$2>";;
+    scout="$2";;
+
   "-slout")
-    slout="$2"
-    echo "Séparateur de ligne en dest used <$2>";;
+    slout="$2";;
+
   "-inverse")
-    inverse=1
-    echo "Inversion des lignes et colonnes";;
-  *) echo "Arg <$1 $2> non reconnue. Arrêt du script." && exit 1;;
+    inverse=1;;
+
+  *) echo "Arg <$1 $2> non reconnue. Arrêt du script.\n$errorMsg" && exit 1;;
+
   esac
-  echo "arg1 : <$1> arg2 : <$2>"
   if test "$1" != "-inverse"; then shift && shift; else shift; fi
 done
-# echo "\n"
 
-# les non-spécifié #
-test -z "$scin" && scin="\t" && echo "Default -scin => <$scin>"
-test -z "$slin" && slin="\n" && echo "Default -slin => <$slin>"
-test -z "$scout" && scout="$scin" && echo "Default -scout => <$scout>"
-test -z "$slout" && slout="$slin" && echo "Default -slout => <$slout>"
-echo "-inverse <$inverse>"
-test -z $inverse && inverse=0 && echo "Default -inverse => <$inverse>"
+# les arguments non spécifiés #
+test -z "$scin" && scin="\t" 
+test -z "$slin" && slin="\n" 
+test -z "$scout" && scout="$scin"
+test -z "$slout" && slout="$slin"
+test -z $inverse && inverse=0
 # ---------------- #
-echo "\n"
 # test du fichier en arg '-in' #
 if test -z $source || ! test -f $source
 then
@@ -391,13 +360,12 @@ then
   echo "`echo "$source_buffer" | sed "s|\(.*\)\n.*|\1|"`" > "$source"
 else
   # echo "On lira <$source> plus tard"
-  ! test -f $source && echo "$souce n'existe pas." && exit 1
+  ! test -f $source && echo "$source n'existe pas." && exit 1
   stdin=0
 fi
 
 # echo "Note : Le fichier '-in' doit exister pour être utiliser."
 # ---------------------------- #
-echo "\n"
 # test du fichier en arg '-out' #
 if test -z $dest
 then
@@ -415,7 +383,7 @@ echo "\n"
 nbLine=`wc -l < $source`
 destBuffer=""
 
-# !!! FILE/ECHO VERSION !!! #
+# !!! READ CSV !!! #
 echo "Traitement en cours..."
 while IFS=$slin read line
 do
@@ -442,8 +410,6 @@ do
   destBuffer="$destBuffer$slout"
   destRes="$destRes$destBuffer"
   destBuffer=""
-  # echo "<$destRes>"
-  # echo "-"
 done < $source
 
 
@@ -460,12 +426,14 @@ then
     test "$i" -lt "$nbLine" && i="$nbLine"
   done < "$source"
   tmp_i=1
+  test "$slout" != '\n' && destRes="`echo "$destRes" | tr "$slout" '\n'`"
   destRes_tmp="$destRes"
   destRes=""
+  i="`expr $i + 1`"
   while test "$tmp_i" -le "$i"
   do
     destBuffer=""
-    destBuffer=`echo "$destRes_tmp" | cut -d"$scout" -f"$tmp_i" -s | tr '\r' "$slout" | tr "$slout" "$scout" | sed "s|\(.*\)["$scout"].*|\1|"`
+    destBuffer=`echo "$destRes_tmp" | cut -d"$scout" -f"$tmp_i" -s | tr '\r' '\n' | tr '\n' "$scout" | sed "s|\(.*\)["$scout"].*|\1|"`
     destRes="$destRes$destBuffer$slout"
     tmp_i=`expr $tmp_i + 1`
   done
