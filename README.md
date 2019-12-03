@@ -38,7 +38,15 @@ BENOIT Baptiste</br>
 - **shell(val)** : remplace le contenu de la cellule par le résultat de la commande val
 
 ## Difficultés recontrées
-Bon Naïm je te laisse raconter ta vie ici ...
+Les difficultés furent nombreuses.
+Malgré nos connaissances et les réponses à certaines questions, telles que :
+ - Comment retrouver le contenu d'une cellule à partir d'une chaine "l[number]c[number]" ?
+ - Comment inverser les lignes et colonnes du fichier ?
+ - Obtenir le nom d'une fonction et ses arguments ? 
+ - ...
+
+Les difficultés inhérentes à notre manque d'expérience n'ont pas manquées.
+Les retour chariots involontaires dûs à l'utilisation de certaines commandes, ou encore le fait d'oublier de protéger les variables, nous ont mené à de longues sessions de debuggage.
 
 ## Part de travail
 SEDDAR  Naïm - 33%</br>
